@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.*;
     private TransactionServiceImp transactionService;
 
     @Test
-    void shouldReturnTransactionWhenCreateAccountInvoked() {
+    void shouldReturnTransactionWhenCreateTransactionInvoked() {
 
         when(transactionRepository.save(any())).thenReturn(new Transaction("1", "123", CREDIT, 300, "23423"));
 
@@ -41,7 +43,7 @@ import static org.mockito.Mockito.*;
         when(transactionRepository.findById(any())).thenReturn(Optional.of(new Transaction("1", "123", CREDIT, 300, "23423")));
 
 
-        TransactionDto transactionDto = transactionService.getTransactionById("123");
+        TransactionDto transactionDto = transactionService.getTransactionById("123","123");
 
 
         assertNotNull(transactionDto);
@@ -54,11 +56,11 @@ import static org.mockito.Mockito.*;
         verify(transactionRepository,atLeastOnce()).deleteById("123");
     }
     @Test
-    void shouldReturnTransactionswhenAccountsnotemptyindb(){
-        List<Transaction> transaction = new ArrayList<Transaction>();
-        transaction.add(new Transaction("1", "123", CREDIT, 300, "23423"));
-        when(transactionRepository.findAll()).thenReturn(transaction);
-        assertFalse(transactionService.getTransactions(2,10).isEmpty());
+    void shouldReturnTransactionswhenAccountsnotemptyindb() throws AccountNotFoundException {
+        List<TransactionDto> transactionDto = new ArrayList<>();
+        transactionDto.add(new TransactionDto("1", "123", CREDIT, 300, "23423"));
+
+        when(transactionService.getTransactions("123",2,2)).thenReturn(transactionDto);
 
     }
 
